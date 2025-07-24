@@ -203,16 +203,16 @@ export const AccessibilityScanner = () => {
         <div className="text-center space-y-6 mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full animate-fade-in">
             <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium">Powered by pa11y</span>
+            <span className="text-sm font-medium">Powered by Vudu Magic</span>
           </div>
           
           <h1 className="text-6xl font-bold gradient-text animate-slide-up">
-            A11y Scanner
+            Vudu A11y
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-lg mx-auto animate-slide-up">
-            Comprehensive accessibility testing for your websites. 
-            Enter a URL and get detailed WCAG compliance reports instantly.
+            Unleash the power of accessibility testing. 
+            Enter a URL and get detailed WCAG compliance reports with mystical precision.
           </p>
         </div>
 
