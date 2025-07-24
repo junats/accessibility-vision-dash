@@ -1,73 +1,214 @@
-# Welcome to your Lovable project
+# Vudu A11y - Mystical Accessibility Testing
 
-## Project info
+🔮 **Unleash the power of accessibility testing with mystical precision**
 
-**URL**: https://lovable.dev/projects/316bb3ba-1b7a-494e-81f0-be3fe5b3f37b
+Vudu A11y is a modern, beautiful accessibility testing tool powered by pa11y that provides comprehensive WCAG compliance reports for your websites.
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+- **Modern Dark Theme** - Inspired by nivas.hr design with custom color palette
+- **Real-time Scanning** - Powered by pa11y for comprehensive accessibility testing
+- **Beautiful Dashboard** - Glass morphism effects with detailed issue breakdown
+- **WCAG Compliance** - Full WCAG 2.1 AA compliance testing
+- **Responsive Design** - Works perfectly on all devices
+- **Themeable** - Easy to customize colors and branding
 
-**Use Lovable**
+## 🚀 Quick Start
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/316bb3ba-1b7a-494e-81f0-be3fe5b3f37b) and start prompting.
+### Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js 18+ and npm
+- Docker (for Devilbox setup)
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. **Clone or download this project**
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
 
-Follow these steps:
+4. **Open your browser:**
+   Navigate to `http://localhost:8080`
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Available Scripts
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+# Development server with hot reload
 npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Lint code
+npm run lint
 ```
 
-**Edit a file directly in GitHub**
+## 🐳 Docker/Devilbox Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+This project is designed to work perfectly with Devilbox:
 
-**Use GitHub Codespaces**
+1. **Place project in your Devilbox htdocs:**
+   ```bash
+   /shared/httpd/vudu-a11y/
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. **Access via Devilbox:**
+   ```
+   http://vudu-a11y.loc:8080
+   ```
 
-## What technologies are used for this project?
+3. **For pa11y backend integration:**
+   - Set up a Node.js container in Devilbox
+   - Install pa11y in your backend service
+   - Create API endpoints for accessibility scanning
 
-This project is built with:
+## 🔧 Backend Integration (pa11y)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Currently using mock data. To integrate real pa11y:
 
-## How can I deploy this project?
+### 1. Create Backend API
 
-Simply open [Lovable](https://lovable.dev/projects/316bb3ba-1b7a-494e-81f0-be3fe5b3f37b) and click on Share -> Publish.
+```javascript
+// Example Express.js endpoint
+app.post('/api/scan', async (req, res) => {
+  const { url } = req.body;
+  
+  try {
+    const results = await pa11y(url, {
+      standard: 'WCAG2AA',
+      includeNotices: false,
+      includeWarnings: true
+    });
+    
+    res.json({
+      url,
+      timestamp: new Date().toISOString(),
+      issues: results.map(issue => ({
+        type: issue.type,
+        code: issue.code,
+        message: issue.message,
+        selector: issue.selector,
+        context: issue.context
+      })),
+      // Add summary stats
+      passed: results.filter(r => r.type === 'notice').length,
+      failed: results.filter(r => r.type === 'error').length,
+      warnings: results.filter(r => r.type === 'warning').length
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Scan failed' });
+  }
+});
+```
 
-## Can I connect a custom domain to my Lovable project?
+### 2. Update Frontend
 
-Yes, you can!
+Replace the mock function in `src/components/AccessibilityScanner.tsx`:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```javascript
+const handleScan = async () => {
+  // Replace mock timeout with real API call
+  const response = await fetch('/api/scan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url })
+  });
+  
+  const result = await response.json();
+  setScanResult(result);
+};
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🎨 Customization
+
+### Colors
+Edit `src/index.css` to customize the color palette:
+
+```css
+:root {
+  --primary: 191 71% 43%;      /* #1F9DB9 */
+  --secondary: 273 75% 22%;    /* #330E62 */
+  --accent: 208 49% 44%;       /* #3A6EA5 */
+  /* Add your custom colors */
+}
+```
+
+### Branding
+Update branding in `src/components/AccessibilityScanner.tsx`
+
+## 📁 Project Structure
+
+```
+vudu-a11y/
+├── src/
+│   ├── components/
+│   │   ├── ui/              # Shadcn UI components
+│   │   └── AccessibilityScanner.tsx
+│   ├── hooks/
+│   ├── lib/
+│   ├── pages/
+│   └── index.css            # Design system
+├── public/
+├── tailwind.config.ts       # Tailwind configuration
+├── vite.config.ts          # Vite configuration
+└── package.json
+```
+
+## 🛠 Technology Stack
+
+- **Frontend:** React 18 + TypeScript
+- **Styling:** Tailwind CSS + Shadcn/ui
+- **Build Tool:** Vite
+- **Accessibility Testing:** pa11y (backend integration needed)
+- **Icons:** Lucide React
+- **Animations:** Custom CSS + Tailwind
+
+## 🌙 Theme Support
+
+The app includes a complete theming system:
+- Dark theme (default)
+- Light theme ready
+- Custom color tokens
+- Glass morphism effects
+- Gradient animations
+
+## 📝 Development Notes
+
+- All colors use HSL format for better theming
+- Components use design system tokens (no hardcoded colors)
+- Responsive design with mobile-first approach
+- Accessibility-first development
+- Modern CSS features (backdrop-filter, custom properties)
+
+## 🔮 Mystical Features
+
+- Gradient text effects
+- Glow animations
+- Glass morphism cards
+- Smooth page transitions
+- Magical loading states
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
+
+---
+
+**Made with ✨ mystical precision**
