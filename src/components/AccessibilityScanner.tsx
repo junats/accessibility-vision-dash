@@ -57,47 +57,98 @@ export const AccessibilityScanner = () => {
 
     setIsScanning(true);
     
-    // Simulate pa11y scan (in real implementation, this would call your backend)
-    setTimeout(() => {
-      const mockResult: ScanResult = {
-        url,
-        timestamp: new Date().toISOString(),
-        issues: [
-          {
-            type: 'error',
-            code: 'WCAG2AA.Principle1.Guideline1_1.1_1_1.H37',
-            message: 'Img element missing an alt attribute',
-            selector: 'img[src="hero-image.jpg"]',
-            context: '<img src="hero-image.jpg" class="hero-img">'
-          },
-          {
-            type: 'warning',
-            code: 'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl',
-            message: 'Document should have a title element',
-            selector: 'html',
-            context: '<html><head>...'
-          },
-          {
-            type: 'error',
-            code: 'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.Button.Name',
-            message: 'Button element must have accessible name',
-            selector: 'button.submit-btn',
-            context: '<button class="submit-btn">Submit</button>'
-          }
-        ],
-        passed: 47,
-        failed: 2,
-        warnings: 1
-      };
-      
-      setScanResult(mockResult);
-      setIsScanning(false);
-      
-      toast({
-        title: "Scan Complete",
-        description: `Found ${mockResult.failed} errors and ${mockResult.warnings} warnings`,
-      });
-    }, 2000);
+    if (scanFullDomain) {
+      // Simulate domain-wide scan
+      setTimeout(() => {
+        const mockResult: ScanResult = {
+          url,
+          timestamp: new Date().toISOString(),
+          issues: [
+            {
+              type: 'error',
+              code: 'WCAG2AA.Principle1.Guideline1_1.1_1_1.H37',
+              message: 'Img element missing an alt attribute',
+              selector: 'img[src="hero-image.jpg"]',
+              context: '<img src="hero-image.jpg" class="hero-img"> (found on /home)'
+            },
+            {
+              type: 'error',
+              code: 'WCAG2AA.Principle1.Guideline1_3.1_3_1.H43.IncorrectAttr',
+              message: 'Table headers missing scope attribute',
+              selector: 'table th',
+              context: '<th>Product Name</th> (found on /products)'
+            },
+            {
+              type: 'warning',
+              code: 'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl',
+              message: 'Document should have a title element',
+              selector: 'html',
+              context: '<html><head>... (found on /about)'
+            },
+            {
+              type: 'error',
+              code: 'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.Button.Name',
+              message: 'Button element must have accessible name',
+              selector: 'button.submit-btn',
+              context: '<button class="submit-btn">Submit</button> (found on /contact)'
+            },
+            {
+              type: 'warning',
+              code: 'WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Fail',
+              message: 'Insufficient color contrast',
+              selector: '.text-gray-400',
+              context: '<span class="text-gray-400">Secondary text</span> (found on /blog)'
+            }
+          ],
+          passed: 142,
+          failed: 3,
+          warnings: 2
+        };
+        
+        setScanResult(mockResult);
+        setIsScanning(false);
+        
+        toast({
+          title: "Domain Scan Complete",
+          description: `Scanned 5 pages. Found ${mockResult.failed} errors and ${mockResult.warnings} warnings`,
+        });
+      }, 4000); // Longer delay for domain scan
+    } else {
+      // Simulate single page scan
+      setTimeout(() => {
+        const mockResult: ScanResult = {
+          url,
+          timestamp: new Date().toISOString(),
+          issues: [
+            {
+              type: 'error',
+              code: 'WCAG2AA.Principle1.Guideline1_1.1_1_1.H37',
+              message: 'Img element missing an alt attribute',
+              selector: 'img[src="hero-image.jpg"]',
+              context: '<img src="hero-image.jpg" class="hero-img">'
+            },
+            {
+              type: 'warning',
+              code: 'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl',
+              message: 'Document should have a title element',
+              selector: 'html',
+              context: '<html><head>...'
+            }
+          ],
+          passed: 28,
+          failed: 1,
+          warnings: 1
+        };
+        
+        setScanResult(mockResult);
+        setIsScanning(false);
+        
+        toast({
+          title: "Page Scan Complete",
+          description: `Found ${mockResult.failed} errors and ${mockResult.warnings} warnings`,
+        });
+      }, 2000);
+    }
   };
 
   const resetScan = () => {
