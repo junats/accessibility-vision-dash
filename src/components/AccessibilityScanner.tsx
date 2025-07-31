@@ -42,6 +42,23 @@ interface ScanResult {
   complianceScore: number;
 }
 
+const getFixExample = (issue: AccessibilityIssue): string => {
+  switch (issue.code) {
+    case 'WCAG2AA.Principle1.Guideline1_1.1_1_1.H37':
+      return '<img src="hero-image.jpg" alt="Hero image showing our main product" class="hero-img">';
+    case 'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl':
+      return '<html><head><title>About Us - Company Name</title>...</head>';
+    case 'WCAG2AA.Principle1.Guideline1_3.1_3_1.H43.IncorrectAttr':
+      return '<th scope="col">Product Name</th>';
+    case 'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.Button.Name':
+      return '<button class="submit-btn" aria-label="Submit contact form">Submit</button>';
+    case 'WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Fail':
+      return '<span class="text-gray-600">Secondary text</span> <!-- Use darker color for better contrast -->';
+    default:
+      return '<!-- Please refer to WCAG guidelines for specific fix recommendations -->';
+  }
+};
+
 export const AccessibilityScanner = () => {
   const [url, setUrl] = useState("");
   const [isScanning, setIsScanning] = useState(false);
@@ -96,7 +113,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url}/about`,
+            url: `${url.replace(/\/$/, '')}/about`,
             title: "About Us",
             issues: [
               {
@@ -114,7 +131,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url}/products`,
+            url: `${url.replace(/\/$/, '')}/products`,
             title: "Products",
             issues: [
               {
@@ -132,7 +149,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url}/contact`,
+            url: `${url.replace(/\/$/, '')}/contact`,
             title: "Contact Us",
             issues: [
               {
@@ -157,7 +174,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url}/blog`,
+            url: `${url.replace(/\/$/, '')}/blog`,
             title: "Blog",
             issues: [],
             passed: 38,
@@ -399,9 +416,22 @@ export const AccessibilityScanner = () => {
                           </span>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant={pageScore >= 90 ? "default" : pageScore >= 70 ? "secondary" : "destructive"}>
-                            {pageScore}%
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                              variant={pageScore >= 90 ? "default" : pageScore >= 70 ? "secondary" : "destructive"}
+                              className="relative"
+                            >
+                              {pageScore}%
+                            </Badge>
+                            <div className="w-12 h-2 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full transition-all duration-300 ${
+                                  pageScore >= 90 ? 'bg-green-500' : pageScore >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                                }`}
+                                style={{ width: `${pageScore}%` }}
+                              />
+                            </div>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -452,11 +482,22 @@ export const AccessibilityScanner = () => {
                             </p>
                             <details className="text-sm">
                               <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                                View context
+                                View context & fix example
                               </summary>
-                              <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-x-auto">
-                                {issue.context}
-                              </pre>
+                              <div className="mt-2 space-y-3">
+                                <div>
+                                  <p className="text-xs font-medium mb-1">Current code:</p>
+                                  <pre className="p-2 bg-muted rounded text-xs overflow-x-auto">
+                                    {issue.context}
+                                  </pre>
+                                </div>
+                                <div>
+                                  <p className="text-xs font-medium mb-1 text-green-600">Suggested fix:</p>
+                                  <pre className="p-2 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded text-xs overflow-x-auto">
+                                    {getFixExample(issue)}
+                                  </pre>
+                                </div>
+                              </div>
                             </details>
                           </div>
                         </div>
