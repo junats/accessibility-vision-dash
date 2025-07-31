@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, Globe, Scan, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -28,6 +30,7 @@ export const AccessibilityScanner = () => {
   const [url, setUrl] = useState("");
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [scanFullDomain, setScanFullDomain] = useState(false);
   const { toast } = useToast();
 
   const handleScan = async () => {
@@ -228,7 +231,7 @@ export const AccessibilityScanner = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
+            <div className="space-y-4">
               <Input
                 type="url"
                 placeholder="https://example.com"
@@ -237,6 +240,26 @@ export const AccessibilityScanner = () => {
                 className="h-12 text-lg"
                 disabled={isScanning}
               />
+              
+              <div className="flex items-center justify-between p-4 rounded-lg border bg-card/50">
+                <div className="space-y-1">
+                  <Label htmlFor="scan-mode" className="text-sm font-medium">
+                    Scan full domain
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    {scanFullDomain 
+                      ? "Scan all pages within the domain" 
+                      : "Scan only the specific URL"
+                    }
+                  </p>
+                </div>
+                <Switch
+                  id="scan-mode"
+                  checked={scanFullDomain}
+                  onCheckedChange={setScanFullDomain}
+                  disabled={isScanning}
+                />
+              </div>
             </div>
             
             <Button 
@@ -247,12 +270,12 @@ export const AccessibilityScanner = () => {
               {isScanning ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
-                  Scanning...
+                  {scanFullDomain ? "Scanning domain..." : "Scanning page..."}
                 </>
               ) : (
                 <>
                   <Scan className="w-5 h-5 mr-2" />
-                  Start Accessibility Scan
+                  {scanFullDomain ? "Scan Full Domain" : "Scan Single Page"}
                 </>
               )}
             </Button>
