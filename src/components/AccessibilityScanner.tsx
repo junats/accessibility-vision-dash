@@ -64,6 +64,13 @@ export const AccessibilityScanner = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [scanFullDomain, setScanFullDomain] = useState(false);
+  const [accessibilityStandards, setAccessibilityStandards] = useState({
+    wcag21: true,
+    wcag22: false,
+    section508: false,
+    ada: false,
+    en301549: false,
+  });
   const { toast } = useToast();
 
   const handleScan = async () => {
@@ -113,7 +120,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/$/, '')}/about`,
+            url: `${url.replace(/\/+$/, '')}/about`,
             title: "About Us",
             issues: [
               {
@@ -131,7 +138,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/$/, '')}/products`,
+            url: `${url.replace(/\/+$/, '')}/products`,
             title: "Products",
             issues: [
               {
@@ -149,7 +156,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/$/, '')}/contact`,
+            url: `${url.replace(/\/+$/, '')}/contact`,
             title: "Contact Us",
             issues: [
               {
@@ -174,7 +181,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/$/, '')}/blog`,
+            url: `${url.replace(/\/+$/, '')}/blog`,
             title: "Blog",
             issues: [],
             passed: 38,
@@ -524,24 +531,68 @@ export const AccessibilityScanner = () => {
     );
   }
 
+  const standardsDescriptions = {
+    wcag21: {
+      name: "WCAG 2.1 AA",
+      description: "Web Content Accessibility Guidelines 2.1 Level AA - Global standard for web accessibility"
+    },
+    wcag22: {
+      name: "WCAG 2.2 AA", 
+      description: "Latest WCAG guidelines with enhanced mobile and cognitive accessibility requirements"
+    },
+    section508: {
+      name: "Section 508",
+      description: "US Federal accessibility standard for government agencies and contractors"
+    },
+    ada: {
+      name: "ADA Compliance",
+      description: "Americans with Disabilities Act requirements for public accommodations"
+    },
+    en301549: {
+      name: "EN 301 549",
+      description: "European accessibility standard for ICT products and services"
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-2xl mx-auto w-full">
         {/* Hero Section */}
         <div className="text-center space-y-6 mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full animate-fade-in">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium">Powered by Vudu Magic</span>
+          {/* VUDU3CAN Logo */}
+          <div className="relative inline-flex items-center justify-center w-32 h-32">
+            {/* Scanning rings animation */}
+            <div className="absolute inset-0 animate-pulse">
+              <div className="absolute inset-0 rounded-full border-2 border-cyan-400/30"></div>
+              <div className="absolute inset-2 rounded-full border-2 border-cyan-400/50 animate-spin" style={{animationDuration: '3s'}}></div>
+              <div className="absolute inset-4 rounded-full border-2 border-cyan-400/70 animate-spin" style={{animationDuration: '2s', animationDirection: 'reverse'}}></div>
+              {/* Scanning dots */}
+              <div className="absolute top-2 left-1/2 w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+              <div className="absolute top-8 right-4 w-1.5 h-1.5 bg-cyan-300 rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+              <div className="absolute bottom-6 left-6 w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+              <div className="absolute bottom-2 right-8 w-2 h-2 bg-cyan-400 rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
+              <div className="absolute top-1/2 left-2 w-1 h-1 bg-cyan-300 rounded-full animate-pulse" style={{animationDelay: '2s'}}></div>
+              <div className="absolute top-1/2 right-2 w-1 h-1 bg-cyan-500 rounded-full animate-pulse" style={{animationDelay: '0.3s'}}></div>
+            </div>
+            
+            {/* Logo text */}
+            <div className="relative z-10 text-center">
+              <h1 className="text-2xl font-bold text-white tracking-wider" style={{
+                textShadow: '0 0 20px rgba(34, 211, 238, 0.5)',
+                fontFamily: 'monospace',
+                fontWeight: 900
+              }}>
+                VUDU3CAN
+              </h1>
+            </div>
           </div>
           
-          <h1 className="text-6xl font-bold gradient-text animate-slide-up">
-            Vudu A11y
-          </h1>
-          
-          <p className="text-xl text-muted-foreground max-w-lg mx-auto animate-slide-up">
-            Unleash the power of accessibility testing. 
-            Enter a URL and get detailed WCAG compliance reports with mystical precision.
-          </p>
+          <div className="space-y-2">
+            <p className="text-lg font-semibold text-primary">Accessibility Scanner</p>
+            <p className="text-muted-foreground">
+              Comprehensive WCAG compliance testing for your website
+            </p>
+          </div>
         </div>
 
         {/* Scan Form */}
@@ -584,6 +635,33 @@ export const AccessibilityScanner = () => {
                   onCheckedChange={setScanFullDomain}
                   disabled={isScanning}
                 />
+              </div>
+
+              {/* Accessibility Standards Selection */}
+              <div className="space-y-3 pt-4 border-t">
+                <Label className="text-sm font-medium">Accessibility Standards</Label>
+                <div className="space-y-3">
+                  {Object.entries(standardsDescriptions).map(([key, standard]) => (
+                    <div key={key} className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          id={key}
+                          checked={accessibilityStandards[key as keyof typeof accessibilityStandards]}
+                          onCheckedChange={(checked) => 
+                            setAccessibilityStandards(prev => ({ ...prev, [key]: checked }))
+                          }
+                          disabled={isScanning}
+                        />
+                        <Label htmlFor={key} className="text-sm font-medium">
+                          {standard.name}
+                        </Label>
+                      </div>
+                      <p className="text-xs text-muted-foreground ml-6">
+                        {standard.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             
