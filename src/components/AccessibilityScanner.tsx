@@ -100,97 +100,134 @@ export const AccessibilityScanner = () => {
     if (scanFullDomain) {
       // Simulate domain-wide scan with multiple pages
       setTimeout(() => {
-        const mockPages: PageResult[] = [
-          {
-            url: `${url}`,
-            title: "Home Page",
-            issues: [
+        const baseUrl = url.replace(/\/+$/, '').replace(/\/{2,}/g, '/');
+        
+        // Generate realistic pages for a comprehensive domain scan
+        const pageTemplates = [
+          { path: '', title: 'Home Page', errorRate: 0.1 },
+          { path: '/about', title: 'About Us', errorRate: 0.05 },
+          { path: '/contact', title: 'Contact Us', errorRate: 0.15 },
+          { path: '/products', title: 'Products', errorRate: 0.08 },
+          { path: '/services', title: 'Services', errorRate: 0.06 },
+          { path: '/blog', title: 'Blog', errorRate: 0.02 },
+          { path: '/news', title: 'News', errorRate: 0.03 },
+          { path: '/careers', title: 'Careers', errorRate: 0.07 },
+          { path: '/support', title: 'Support', errorRate: 0.12 },
+          { path: '/privacy', title: 'Privacy Policy', errorRate: 0.04 },
+          { path: '/terms', title: 'Terms of Service', errorRate: 0.04 },
+          { path: '/faq', title: 'FAQ', errorRate: 0.09 },
+          { path: '/team', title: 'Our Team', errorRate: 0.06 },
+          { path: '/pricing', title: 'Pricing', errorRate: 0.08 },
+          { path: '/portfolio', title: 'Portfolio', errorRate: 0.05 },
+          { path: '/testimonials', title: 'Testimonials', errorRate: 0.03 },
+          { path: '/login', title: 'Login', errorRate: 0.11 },
+          { path: '/register', title: 'Register', errorRate: 0.13 },
+          { path: '/dashboard', title: 'Dashboard', errorRate: 0.07 },
+          { path: '/profile', title: 'User Profile', errorRate: 0.06 },
+          { path: '/settings', title: 'Settings', errorRate: 0.08 },
+          { path: '/help', title: 'Help Center', errorRate: 0.05 },
+          { path: '/downloads', title: 'Downloads', errorRate: 0.04 },
+          { path: '/gallery', title: 'Gallery', errorRate: 0.03 },
+          { path: '/events', title: 'Events', errorRate: 0.06 },
+          { path: '/locations', title: 'Locations', errorRate: 0.05 },
+          { path: '/partners', title: 'Partners', errorRate: 0.04 },
+          { path: '/investors', title: 'Investors', errorRate: 0.03 },
+          { path: '/press', title: 'Press Releases', errorRate: 0.02 },
+          { path: '/sitemap', title: 'Sitemap', errorRate: 0.01 },
+        ];
+
+        // Generate additional blog posts and product pages
+        const additionalPages = [];
+        for (let i = 1; i <= 20; i++) {
+          additionalPages.push({
+            path: `/blog/post-${i}`,
+            title: `Blog Post ${i}`,
+            errorRate: 0.02 + Math.random() * 0.04
+          });
+        }
+        for (let i = 1; i <= 10; i++) {
+          additionalPages.push({
+            path: `/products/product-${i}`,
+            title: `Product ${i}`,
+            errorRate: 0.05 + Math.random() * 0.08
+          });
+        }
+
+        const allPageTemplates = [...pageTemplates, ...additionalPages];
+        
+        const mockPages: PageResult[] = allPageTemplates.slice(0, 60).map((template, index) => {
+          const hasErrors = Math.random() < template.errorRate;
+          const hasWarnings = Math.random() < 0.3;
+          
+          const issues: AccessibilityIssue[] = [];
+          
+          if (hasErrors) {
+            const errorTypes = [
               {
-                type: 'error',
+                type: 'error' as const,
                 code: 'WCAG2AA.Principle1.Guideline1_1.1_1_1.H37',
                 message: 'Img element missing an alt attribute',
                 selector: 'img[src="hero-image.jpg"]',
                 context: '<img src="hero-image.jpg" class="hero-img">'
-              }
-            ],
-            passed: 45,
-            failed: 1,
-            warnings: 0,
-            loadTime: 1.2,
-            statusCode: 200
-          },
-          {
-            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/about`,
-            title: "About Us",
-            issues: [
+              },
               {
-                type: 'warning',
-                code: 'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl',
-                message: 'Document should have a title element',
-                selector: 'html',
-                context: '<html><head>...'
-              }
-            ],
-            passed: 32,
-            failed: 0,
-            warnings: 1,
-            loadTime: 0.8,
-            statusCode: 200
-          },
-          {
-            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/products`,
-            title: "Products",
-            issues: [
-              {
-                type: 'error',
-                code: 'WCAG2AA.Principle1.Guideline1_3.1_3_1.H43.IncorrectAttr',
-                message: 'Table headers missing scope attribute',
-                selector: 'table th',
-                context: '<th>Product Name</th>'
-              }
-            ],
-            passed: 28,
-            failed: 1,
-            warnings: 0,
-            loadTime: 1.5,
-            statusCode: 200
-          },
-          {
-            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/contact`,
-            title: "Contact Us",
-            issues: [
-              {
-                type: 'error',
+                type: 'error' as const,
                 code: 'WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.Button.Name',
                 message: 'Button element must have accessible name',
                 selector: 'button.submit-btn',
                 context: '<button class="submit-btn">Submit</button>'
               },
               {
-                type: 'warning',
+                type: 'error' as const,
+                code: 'WCAG2AA.Principle1.Guideline1_3.1_3_1.H43.IncorrectAttr',
+                message: 'Table headers missing scope attribute',
+                selector: 'table th',
+                context: '<th>Product Name</th>'
+              }
+            ];
+            
+            const randomError = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+            issues.push(randomError);
+          }
+          
+          if (hasWarnings) {
+            const warningTypes = [
+              {
+                type: 'warning' as const,
+                code: 'WCAG2AA.Principle2.Guideline2_4.2_4_2.H25.1.NoTitleEl',
+                message: 'Document should have a title element',
+                selector: 'html',
+                context: '<html><head>...'
+              },
+              {
+                type: 'warning' as const,
                 code: 'WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Fail',
                 message: 'Insufficient color contrast',
                 selector: '.text-gray-400',
                 context: '<span class="text-gray-400">Secondary text</span>'
               }
-            ],
-            passed: 25,
-            failed: 1,
-            warnings: 1,
-            loadTime: 0.9,
-            statusCode: 200
-          },
-          {
-            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/blog`,
-            title: "Blog",
-            issues: [],
-            passed: 38,
-            failed: 0,
-            warnings: 0,
-            loadTime: 1.1,
-            statusCode: 200
+            ];
+            
+            const randomWarning = warningTypes[Math.floor(Math.random() * warningTypes.length)];
+            issues.push(randomWarning);
           }
-        ];
+          
+          const passed = Math.floor(Math.random() * 20) + 25; // 25-45 passed tests
+          const failed = issues.filter(i => i.type === 'error').length;
+          const warnings = issues.filter(i => i.type === 'warning').length;
+          const loadTime = Math.round((Math.random() * 2 + 0.5) * 10) / 10; // 0.5-2.5s
+          
+          return {
+            url: `${baseUrl}${template.path}`,
+            title: template.title,
+            issues,
+            passed,
+            failed,
+            warnings,
+            loadTime,
+            statusCode: Math.random() < 0.95 ? 200 : (Math.random() < 0.5 ? 404 : 500)
+          };
+        });
 
         const totalPassed = mockPages.reduce((sum, page) => sum + page.passed, 0);
         const totalFailed = mockPages.reduce((sum, page) => sum + page.failed, 0);
@@ -205,7 +242,7 @@ export const AccessibilityScanner = () => {
           totalPassed,
           totalFailed,
           totalWarnings,
-          scanDuration: 4.2,
+          scanDuration: 15.3, // Longer scan time for more pages
           complianceScore
         };
         
@@ -216,7 +253,7 @@ export const AccessibilityScanner = () => {
           title: "Domain Scan Complete",
           description: `Scanned ${mockResult.totalPages} pages. Found ${mockResult.totalFailed} errors and ${mockResult.totalWarnings} warnings`,
         });
-      }, 4000);
+      }, 8000); // Longer scanning time for more realistic feel
     } else {
       // Simulate single page scan
       setTimeout(() => {
