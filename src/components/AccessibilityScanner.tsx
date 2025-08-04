@@ -120,7 +120,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/+$/, '')}/about`,
+            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/about`,
             title: "About Us",
             issues: [
               {
@@ -138,7 +138,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/+$/, '')}/products`,
+            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/products`,
             title: "Products",
             issues: [
               {
@@ -156,7 +156,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/+$/, '')}/contact`,
+            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/contact`,
             title: "Contact Us",
             issues: [
               {
@@ -181,7 +181,7 @@ export const AccessibilityScanner = () => {
             statusCode: 200
           },
           {
-            url: `${url.replace(/\/+$/, '')}/blog`,
+            url: `${url.replace(/\/+$/, '').replace(/\/{2,}/g, '/')}/blog`,
             title: "Blog",
             issues: [],
             passed: 38,
@@ -305,9 +305,29 @@ export const AccessibilityScanner = () => {
                     {scanResult.complianceScore >= 90 ? "Excellent" : scanResult.complianceScore >= 70 ? "Good" : "Needs Work"}
                   </Badge>
                 </div>
-                <div className="space-y-2">
+                <div className="flex items-center gap-4">
+                  <div className="relative w-16 h-16">
+                    <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="hsl(var(--muted))"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke={scanResult.complianceScore >= 90 ? "hsl(var(--primary))" : scanResult.complianceScore >= 70 ? "#eab308" : "#ef4444"}
+                        strokeWidth="2"
+                        strokeDasharray={`${scanResult.complianceScore}, 100`}
+                        className="transition-all duration-1000 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg font-bold">{scanResult.complianceScore}%</span>
+                    </div>
+                  </div>
                   <div className="text-3xl font-bold">{scanResult.complianceScore}%</div>
-                  <Progress value={scanResult.complianceScore} className="h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -320,10 +340,33 @@ export const AccessibilityScanner = () => {
                     <span className="text-sm font-medium">Tests Passed</span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-green-400">{scanResult.totalPassed}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}% success rate
+                <div className="flex items-center gap-4">
+                  <div className="relative w-16 h-16">
+                    <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="hsl(var(--muted))"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#10b981"
+                        strokeWidth="2"
+                        strokeDasharray={`${Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}, 100`}
+                        className="transition-all duration-1000 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xs font-bold">{Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}%</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-3xl font-bold text-green-400">{scanResult.totalPassed}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}% success rate
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -337,10 +380,33 @@ export const AccessibilityScanner = () => {
                     <span className="text-sm font-medium">Critical Issues</span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-red-400">{scanResult.totalFailed}</div>
-                  <div className="text-sm text-muted-foreground">
-                    Across {scanResult.pagesScanned.filter(p => p.failed > 0).length} page{scanResult.pagesScanned.filter(p => p.failed > 0).length !== 1 ? 's' : ''}
+                <div className="flex items-center gap-4">
+                  <div className="relative w-16 h-16">
+                    <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="hsl(var(--muted))"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="2"
+                        strokeDasharray={`${Math.min((scanResult.totalFailed / Math.max(scanResult.totalFailed, 5)) * 100, 100)}, 100`}
+                        className="transition-all duration-1000 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg font-bold text-red-400">{scanResult.totalFailed}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-3xl font-bold text-red-400">{scanResult.totalFailed}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Across {scanResult.pagesScanned.filter(p => p.failed > 0).length} page{scanResult.pagesScanned.filter(p => p.failed > 0).length !== 1 ? 's' : ''}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -354,10 +420,33 @@ export const AccessibilityScanner = () => {
                     <span className="text-sm font-medium">Warnings</span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-yellow-400">{scanResult.totalWarnings}</div>
-                  <div className="text-sm text-muted-foreground">
-                    Recommendations for improvement
+                <div className="flex items-center gap-4">
+                  <div className="relative w-16 h-16">
+                    <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="hsl(var(--muted))"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#eab308"
+                        strokeWidth="2"
+                        strokeDasharray={`${Math.min((scanResult.totalWarnings / Math.max(scanResult.totalWarnings, 5)) * 100, 100)}, 100`}
+                        className="transition-all duration-1000 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg font-bold text-yellow-400">{scanResult.totalWarnings}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-3xl font-bold text-yellow-400">{scanResult.totalWarnings}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Recommendations for improvement
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -500,7 +589,7 @@ export const AccessibilityScanner = () => {
                                 </div>
                                 <div>
                                   <p className="text-xs font-medium mb-1 text-green-600">Suggested fix:</p>
-                                  <pre className="p-2 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded text-xs overflow-x-auto">
+                                  <pre className="p-2 bg-card border border-green-500/30 rounded text-xs overflow-x-auto text-green-600">
                                     {getFixExample(issue)}
                                   </pre>
                                 </div>
