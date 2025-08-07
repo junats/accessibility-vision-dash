@@ -8,8 +8,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertCircle, CheckCircle, Globe, Scan, Zap, ExternalLink, TrendingUp, Shield, Eye } from "lucide-react";
+import { AlertCircle, CheckCircle, Globe, Scan, Zap, ExternalLink, TrendingUp, Shield, Eye, Clock, Smartphone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Area, AreaChart } from 'recharts';
 
 interface AccessibilityIssue {
   type: 'error' | 'warning';
@@ -331,7 +332,7 @@ export const AccessibilityScanner = () => {
 
           {/* Gauge Cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="glass-effect">
+            <Card className="glass-effect hover-scale">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
@@ -342,34 +343,45 @@ export const AccessibilityScanner = () => {
                     {scanResult.complianceScore >= 90 ? "Excellent" : scanResult.complianceScore >= 70 ? "Good" : "Needs Work"}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="relative w-16 h-16">
-                    <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="relative w-24 h-24">
+                    <svg className="w-24 h-24 transform -rotate-90 animate-fade-in" viewBox="0 0 36 36">
+                      <defs>
+                        <linearGradient id="complianceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor={scanResult.complianceScore >= 90 ? "hsl(var(--primary))" : scanResult.complianceScore >= 70 ? "#eab308" : "#ef4444"} />
+                          <stop offset="100%" stopColor={scanResult.complianceScore >= 90 ? "hsl(var(--primary))" : scanResult.complianceScore >= 70 ? "#f59e0b" : "#dc2626"} />
+                        </linearGradient>
+                      </defs>
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
                         stroke="hsl(var(--muted))"
-                        strokeWidth="2"
+                        strokeWidth="3"
                       />
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke={scanResult.complianceScore >= 90 ? "hsl(var(--primary))" : scanResult.complianceScore >= 70 ? "#eab308" : "#ef4444"}
-                        strokeWidth="2"
+                        stroke="url(#complianceGradient)"
+                        strokeWidth="3"
+                        strokeLinecap="round"
                         strokeDasharray={`${scanResult.complianceScore}, 100`}
-                        className="transition-all duration-1000 ease-out"
+                        className="transition-all duration-1000 ease-out animate-scale-in"
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold">{scanResult.complianceScore}%</span>
+                      <span className="text-2xl font-bold animate-fade-in">{scanResult.complianceScore}%</span>
                     </div>
                   </div>
-                  <div className="text-3xl font-bold">{scanResult.complianceScore}%</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground">
+                    Based on WCAG guidelines
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="glass-effect">
+            <Card className="glass-effect hover-scale">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
@@ -377,33 +389,39 @@ export const AccessibilityScanner = () => {
                     <span className="text-sm font-medium">Tests Passed</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="relative w-16 h-16">
-                    <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="relative w-24 h-24">
+                    <svg className="w-24 h-24 transform -rotate-90 animate-fade-in" viewBox="0 0 36 36">
+                      <defs>
+                        <linearGradient id="passedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#10b981" />
+                          <stop offset="100%" stopColor="#059669" />
+                        </linearGradient>
+                      </defs>
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
                         stroke="hsl(var(--muted))"
-                        strokeWidth="2"
+                        strokeWidth="3"
                       />
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke="#10b981"
-                        strokeWidth="2"
+                        stroke="url(#passedGradient)"
+                        strokeWidth="3"
+                        strokeLinecap="round"
                         strokeDasharray={`${Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}, 100`}
-                        className="transition-all duration-1000 ease-out"
+                        className="transition-all duration-1000 ease-out animate-scale-in"
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold">{Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}%</span>
+                      <span className="text-xl font-bold text-green-500 animate-fade-in">{scanResult.totalPassed}</span>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <div className="text-3xl font-bold text-green-400">{scanResult.totalPassed}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}% success rate
-                    </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground">
+                    {Math.round((scanResult.totalPassed / (scanResult.totalPassed + scanResult.totalFailed)) * 100)}% success rate
                   </div>
                 </div>
               </CardContent>
