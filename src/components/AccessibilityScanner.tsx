@@ -330,7 +330,7 @@ export const AccessibilityScanner = () => {
           </div>
 
           {/* Gauge Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
             <Card className="glass-effect">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
