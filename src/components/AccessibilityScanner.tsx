@@ -330,7 +330,7 @@ export const AccessibilityScanner = () => {
           </div>
 
           {/* Gauge Cards */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
             <Card className="glass-effect">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -445,6 +445,40 @@ export const AccessibilityScanner = () => {
                       Across {scanResult.pagesScanned.filter(p => p.failed > 0).length} page{scanResult.pagesScanned.filter(p => p.failed > 0).length !== 1 ? 's' : ''}
                     </div>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass-effect">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Eye className="w-5 h-5 text-yellow-500" />
+                    <span className="text-sm font-medium">Warnings</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-yellow-400">{scanResult.totalWarnings}</div>
+                  <div className="text-sm text-muted-foreground">
+                    Issues to review
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass-effect">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-blue-500" />
+                    <span className="text-sm font-medium">Avg Load Time</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-blue-400">
+                    {(scanResult.pagesScanned.reduce((sum, page) => sum + page.loadTime, 0) / scanResult.pagesScanned.length).toFixed(1)}s
+                  </div>
+                  <div className="text-sm text-muted-foreground">Performance metric</div>
                 </div>
               </CardContent>
             </Card>
